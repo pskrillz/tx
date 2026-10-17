@@ -63,7 +63,8 @@ confidence: 0.95
     assert.strictEqual(messages.length, 1, 'Core should receive 1 message');
     assert.strictEqual(messages[0].type, 'ask-human');
     assert.strictEqual(messages[0].from_agent, 'test/worker');
-    assert.ok(messages[0].payload.body?.includes('favorite color'));
+    assert.ok(typeof messages[0].payload.body === 'string', 'Body should be a string');
+    assert.ok(messages[0].payload.body.includes('favorite color'));
   });
 
   it('should route ask-response from core back to worker', async () => {
@@ -94,7 +95,8 @@ confidence: 1.0
     assert.strictEqual(messages.length, 1, 'Worker should receive 1 message');
     assert.strictEqual(messages[0].type, 'ask-response');
     assert.strictEqual(messages[0].from_agent, 'core/core');
-    assert.ok(messages[0].payload.body?.includes('Blue'));
+    assert.ok(typeof messages[0].payload.body === 'string', 'Body should be a string');
+    assert.ok(messages[0].payload.body.includes('Blue'));
   });
 
   it('should handle full HITL round trip', async () => {
@@ -133,6 +135,7 @@ confidence: 1.0
     const workerMessages = queue.poll('test/worker');
     assert.strictEqual(workerMessages.length, 1);
     assert.strictEqual(workerMessages[0].type, 'ask-response');
-    assert.ok(workerMessages[0].payload.body?.includes('proceed'));
+    assert.ok(typeof workerMessages[0].payload.body === 'string', 'Body should be a string');
+    assert.ok(workerMessages[0].payload.body.includes('proceed'));
   });
 });

@@ -110,9 +110,11 @@ describe('V4 Consumer Test', () => {
     const msg = messages.find(m => m.payload?.['msg-id'] === 'test3');
 
     assert.ok(msg, 'Should find the message');
-    assert.ok(msg.payload.rearmatter, 'Should have rearmatter in payload');
-    assert.strictEqual(msg.payload.rearmatter.grade, 'B');
-    assert.strictEqual(msg.payload.rearmatter.confidence, 0.8);
+    const rearmatter = msg.payload.rearmatter;
+    assert.ok(rearmatter && typeof rearmatter === 'object'
+      && 'grade' in rearmatter && 'confidence' in rearmatter, 'Should have typed rearmatter fields');
+    assert.strictEqual(rearmatter.grade, 'B');
+    assert.strictEqual(rearmatter.confidence, 0.8);
   });
 
   it('should extract command frontmatter', async () => {

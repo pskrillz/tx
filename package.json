@@ -7,6 +7,8 @@
   },
   "scripts": {
     "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test:unit": "node --import tsx --test test/unit/worker-state-machine.test.ts test/unit/api-contracts.test.cjs",
     "test": "node --import tsx --test test/**/*.test.ts",
     "test:e2e": "node --import tsx --test test/e2e/*.ts",
     "start": "node --import tsx src/cli/index.ts start",
