@@ -34,8 +34,18 @@ After install, run `tx start` in a new, or existing project directory. You will 
 - Authenticated Claude Code 
 - `tmux` 
 
-### Windows notes
-- If `npm install` fails during native rebuilds, ensure you are on Node >= 20.19.0 (via nvm-windows is fine).
+### Dependency installation on Windows
+
+The root package no longer runs `npm rebuild` from `postinstall`: rebuilding a
+package runs its install hooks again, so that hook could recursively invoke
+itself. npm still handles dependency install hooks normally; native dependencies
+may require compatible Node binaries or build tools. Use Node >= 20.19.0 for the
+locked dependencies (nvm-windows can select it).
+
+This fixes the install-hook recursion only. The CLI launcher and runtime still
+require a POSIX shell and `tmux`; native Windows runtime support is not established
+by a successful dependency install. Use a compatible POSIX environment for those
+steps, and qualify runtime behavior separately.
 
 ## Quick Start
 > [!IMPORTANT]  
