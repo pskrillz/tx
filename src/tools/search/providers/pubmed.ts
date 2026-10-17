@@ -17,19 +17,22 @@ interface PubMedSearchResponse {
   };
 }
 
+interface PubMedArticle {
+  uid: string;
+  pubdate: string;
+  title: string;
+  authors: Array<{ name: string; authtype: string }>;
+  source: string;
+  volume?: string;
+  issue?: string;
+  pages?: string;
+  sortfirstauthor?: string;
+}
+
 interface PubMedSummaryResponse {
   result: {
-    [key: string]: {
-      uid: string;
-      pubdate: string;
-      title: string;
-      authors: Array<{ name: string; authtype: string }>;
-      source: string;
-      volume?: string;
-      issue?: string;
-      pages?: string;
-      sortfirstauthor?: string;
-    };
+    // ESummary mixes the reserved uids array with records keyed by article ID.
+    [key: string]: PubMedArticle | string[];
     uids: string[];
   };
 }
@@ -126,7 +129,7 @@ export class PubMedProvider extends BaseSearchProvider {
   private mapResult(id: string, summaryData: PubMedSummaryResponse): SearchResult {
     const article = summaryData.result?.[id];
 
-    if (!article) {
+    if (!article || Array.isArray(article)) {
       return {
         title: `PubMed Article (PMID: ${id})`,
         url: `https://pubmed.ncbi.nlm.nih.gov/${id}/`,
@@ -157,7 +160,7 @@ export class PubMedProvider extends BaseSearchProvider {
   /**
    * Format article content for display
    */
-  private formatContent(id: string, article: PubMedSummaryResponse['result'][string]): string {
+  private formatContent(id: string, article: PubMedArticle): string {
     const lines: string[] = [
       `# ${article.title || 'PubMed Article'}`,
       ''

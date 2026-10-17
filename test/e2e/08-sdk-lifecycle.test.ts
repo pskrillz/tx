@@ -162,14 +162,15 @@ describe('V4 SDK Lifecycle Tests', () => {
       };
 
       const runner = new SdkRunner(config, queue);
-      let startEventData: { id: string } | null = null;
+      const startEvents: Array<{ id: string }> = [];
 
       runner.on('start', (data) => {
-        startEventData = data;
+        startEvents.push(data);
       });
 
       await runner.run(); // No messages, completes immediately
 
+      const startEventData = startEvents[0];
       assert.ok(startEventData, 'Start event should be emitted');
       assert.strictEqual(startEventData?.id, workerId, 'Event should contain worker ID');
     });
@@ -185,19 +186,20 @@ describe('V4 SDK Lifecycle Tests', () => {
       };
 
       const runner = new SdkRunner(config, queue);
-      let completeEventData: {
+      const completeEvents: Array<{
         id: string;
         messagesProcessed: number;
         sessionId?: string;
         output?: string;
-      } | null = null;
+      }> = [];
 
       runner.on('complete', (data) => {
-        completeEventData = data;
+        completeEvents.push(data);
       });
 
       const result = await runner.run();
 
+      const completeEventData = completeEvents[0];
       assert.ok(completeEventData, 'Complete event should be emitted');
       assert.strictEqual(completeEventData?.id, workerId, 'Complete event should have worker ID');
       assert.strictEqual(completeEventData?.messagesProcessed, 0, 'Should report 0 messages processed');
@@ -412,19 +414,19 @@ describe('V4 SDK Lifecycle Tests', () => {
     });
   });
 
-  describe('Timeout Configuration', () => {
-    it('should accept optional timeout config', () => {
+  describe('Runner Configuration', () => {
+    it('should allow maxTurns to be omitted', () => {
       const config: SdkRunnerConfig = {
-        id: 'timeout/test',
+        id: 'limits/default-test',
         model: 'haiku',
-        systemPrompt: 'Timeout test',
+        systemPrompt: 'Default limits test',
         workDir: env.rootDir,
-        msgsDir: env.msgsDir,
-        timeout: 30000 // 30 seconds
+        msgsDir: env.msgsDir
       };
 
       const runner = new SdkRunner(config, queue);
-      assert.ok(runner, 'Should create runner with timeout config');
+      assert.ok(runner, 'Should create runner with default limits');
+      assert.strictEqual(config.maxTurns, undefined, 'maxTurns is optional; timeout is not a supported config field');
     });
 
     it('should accept optional maxTurns config', () => {

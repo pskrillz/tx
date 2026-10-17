@@ -71,13 +71,15 @@ describe('V4 Write Messaging Integration Test', () => {
     assert.strictEqual(msg.type, 'task', 'type should be task');
 
     // Verify payload contains body
-    assert.ok(msg.payload.body, 'Payload should contain body');
+    assert.ok(typeof msg.payload.body === 'string', 'Payload should contain a string body');
     assert.ok(msg.payload.body.includes('written by an agent'), 'Body content should be preserved');
 
     // Verify rearmatter is included
-    assert.ok(msg.payload.rearmatter, 'Payload should contain rearmatter');
-    assert.strictEqual(msg.payload.rearmatter.grade, 'A', 'Rearmatter grade should be A');
-    assert.strictEqual(msg.payload.rearmatter.confidence, 0.95, 'Rearmatter confidence should be 0.95');
+    const rearmatter = msg.payload.rearmatter;
+    assert.ok(rearmatter && typeof rearmatter === 'object'
+      && 'grade' in rearmatter && 'confidence' in rearmatter, 'Payload should contain rearmatter fields');
+    assert.strictEqual(rearmatter.grade, 'A', 'Rearmatter grade should be A');
+    assert.strictEqual(rearmatter.confidence, 0.95, 'Rearmatter confidence should be 0.95');
   });
 
   it('message includes filepath in payload for traceability', async () => {
@@ -97,7 +99,7 @@ describe('V4 Write Messaging Integration Test', () => {
     const msg = messages.find(m => m.payload?.['msg-id'] === 'trace-test');
 
     assert.ok(msg, 'Should find the trace test message');
-    assert.ok(msg.payload.filepath, 'Payload should include filepath');
+    assert.ok(typeof msg.payload.filepath === 'string', 'Payload should include a string filepath');
     assert.ok(msg.payload.filepath.includes('trace.md'), 'Filepath should reference the message file');
   });
 

@@ -152,7 +152,7 @@ export class SdkRunner extends EventEmitter {
           switch (msg.type) {
             case 'assistant':
               const textContent = msg.message.content
-                .filter((block): block is { type: 'text'; text: string } => block.type === 'text')
+                .filter((block): block is Extract<typeof block, { type: 'text' }> => block.type === 'text')
                 .map(block => block.text)
                 .join('\n');
 
@@ -162,7 +162,7 @@ export class SdkRunner extends EventEmitter {
                 log.activity('output', workerId, textContent);
               }
 
-              const toolUses = msg.message.content.filter((block): block is { type: 'tool_use'; name: string } => block.type === 'tool_use');
+              const toolUses = msg.message.content.filter((block): block is Extract<typeof block, { type: 'tool_use' }> => block.type === 'tool_use');
               if (toolUses.length > 0) {
                 const toolNames = toolUses.map(t => t.name).join(', ');
                 log.info('sdk-runner', `Tools`, { workerId, tools: toolNames });

@@ -60,8 +60,7 @@ You are a test worker. When you receive a task, acknowledge it.`;
     dispatcher = new WorkerDispatcher({
       workDir: testDir,
       msgsDir,
-      meshesDir,
-      pollInterval: 100  // Fast polling for tests
+      meshesDir  // Dispatcher is event-driven; no polling option exists.
     }, queue);
   });
 

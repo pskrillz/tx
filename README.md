@@ -30,9 +30,22 @@ After install, run `tx start` in a new, or existing project directory. You will 
 - [Know](https://github.com/eighteyes/know-cli) provides opinionated product & software tooling for project planning and execution and is integrated deeply with `tx` ( works, a little rough around the edges )
 
 ## Dependencies
-- `node` 
+- `node` (recommended: Node >= 20.19.0)
 - Authenticated Claude Code 
 - `tmux` 
+
+### Dependency installation on Windows
+
+The root package no longer runs `npm rebuild` from `postinstall`: rebuilding a
+package runs its install hooks again, so that hook could recursively invoke
+itself. npm still handles dependency install hooks normally; native dependencies
+may require compatible Node binaries or build tools. Use Node >= 20.19.0 for the
+locked dependencies (nvm-windows can select it).
+
+This fixes the install-hook recursion only. The CLI launcher and runtime still
+require a POSIX shell and `tmux`; native Windows runtime support is not established
+by a successful dependency install. Use a compatible POSIX environment for those
+steps, and qualify runtime behavior separately.
 
 ## Quick Start
 > [!IMPORTANT]  
@@ -40,7 +53,7 @@ After install, run `tx start` in a new, or existing project directory. You will 
 
 ```bash
 git clone git@github.com:eighteyes/tx.git
-cd tx-cli
+cd tx
 npm install
 # installs global tx command
 npm link
